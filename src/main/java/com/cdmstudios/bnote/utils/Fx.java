@@ -10,6 +10,14 @@ public final class Fx {
     private Fx() {}
 
     public static void play(Player p, String key, String amount) {
+        play(p, key, amount, true);
+    }
+
+    public static void playSoundOnly(Player p, String key) {
+        play(p, key, "", false);
+    }
+
+    private static void play(Player p, String key, String amount, boolean titles) {
         ConfigurationSection s = BankNotes.getInstance().getConfig().getConfigurationSection("feedback." + key);
         if (s == null) return;
 
@@ -17,7 +25,7 @@ public final class Fx {
         if (!sound.isBlank()) {
             p.playSound(p.getLocation(), sound, (float) s.getDouble("volume", 1.0), (float) s.getDouble("pitch", 1.0));
         }
-
+        if (!titles) return;
         String title = s.getString("title", "");
         String sub = s.getString("subtitle", "");
         if (!title.isBlank() || !sub.isBlank()) {

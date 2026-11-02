@@ -4,6 +4,7 @@ import com.cdmstudios.bnote.BankNotes;
 import com.cdmstudios.bnote.utils.Fx;
 import com.cdmstudios.bnote.utils.Log;
 import com.cdmstudios.bnote.utils.NoteUtils;
+import com.cdmstudios.bnote.utils.PouchReveal;
 import com.cdmstudios.bnote.utils.PouchUtils;
 import com.cdmstudios.bnote.utils.Utils;
 import org.bukkit.entity.Player;
@@ -50,8 +51,7 @@ public class PlayerListener implements Listener {
         BankNotes.getInstance().getEconomy().depositPlayer(player, amount);
         String amt = NoteUtils.format(amount);
         Log.info("&e" + player.getName() + " &7opened a &e" + tier.id().toUpperCase() + " &7pouch and received &a$" + amt);
-        Fx.play(player, "pouch", amt);
-        player.sendMessage(Utils.colorize("&6You opened a " + tier.name() + " &6and found &a$" + amt + "&6!"));
+        PouchReveal.start(player, tier.name(), amt);
     }
 
     @EventHandler
@@ -59,6 +59,10 @@ public class PlayerListener implements Listener {
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
         Player player = event.getPlayer();
+        if (PouchReveal.skip(player)) {
+            event.setCancelled(true);
+            return;
+        }
         EquipmentSlot hand = event.getHand();
         if (hand == null) return;
         ItemStack item = player.getInventory().getItem(hand);
