@@ -1,0 +1,33 @@
+main: com.cdmstudios.bnote.BankNotes
+version: 1.0.0-SNAPSHOT
+name: BankNotes
+author: CDM Studios
+description: Withdraw money into redeemable bank notes.
+api-version: 1.21
+depend: [Vault]
+softdepend: [PlaceholderAPI, Essentials]
+commands:
+  bnbalance:
+    description: View your live balance
+    usage: /bnbalance
+    aliases: [notebalance]
+    permission: banknotes.balance
+  withdraw:
+    description: Withdraw money into a bank note
+    usage: /withdraw <amount>
+    permission: banknotes.withdraw
+  bnadmin:
+    description: Bank Notes admin commands
+    usage: /bnadmin <create|give|check|editor|reload>
+    aliases: [banknotesadmin]
+    permission: banknotes.admin
+permissions:
+  banknotes.balance:
+    description: Allows using /bnbalance
+    default: true
+  banknotes.admin:
+    description: Allows Bank Notes admin commands
+    default: op
+  banknotes.withdraw:
+    description: Allows using /withdraw
+    default: true

@@ -1,0 +1,53 @@
+license:
+  key: "YOUR_LICENSE_KEY"
+
+# Sounds use namespaced keys (e.g. entity.player.levelup). Leave sound/title empty to disable.
+# Money pouches: right-click for a random amount between min and max.
+# Give with /bnadmin pouch <tier> [player] [count]
+pouches:
+  t1:
+    name: "&f&lT1 Money Pouch"
+    material: LEATHER
+    min: 10
+    max: 100
+  t2:
+    name: "&a&lT2 Money Pouch"
+    material: RABBIT_HIDE
+    min: 500
+    max: 10000
+  t3:
+    name: "&b&lT3 Money Pouch"
+    material: HEART_OF_THE_SEA
+    min: 25000
+    max: 100000
+  t4:
+    name: "&d&lT4 Money Pouch"
+    material: NETHER_STAR
+    min: 200000
+    max: 1000000
+
+feedback:
+  pouch:
+    sound: "entity.item.pickup"
+    volume: 1.0
+    pitch: 0.8
+    title: "&6&lPOUCH OPENED"
+    subtitle: "&a+${amount}"
+  withdraw:
+    sound: "entity.experience_orb.pickup"
+    volume: 1.0
+    pitch: 1.2
+    title: "&a&lWITHDRAWN"
+    subtitle: "&f${amount} &7is now a bank note"
+  redeem:
+    sound: "entity.player.levelup"
+    volume: 1.0
+    pitch: 1.0
+    title: "&6&lREDEEMED"
+    subtitle: "&a+${amount}"
+  error:
+    sound: "entity.villager.no"
+    volume: 1.0
+    pitch: 1.0
+    title: ""
+    subtitle: ""
