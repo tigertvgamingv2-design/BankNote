@@ -35,6 +35,17 @@ public class RedeemedStore {
         return true;
     }
 
+    // Reverts a redeem (e.g. the economy deposit failed). Rewrites the file without the id.
+    public synchronized void unredeem(String id) throws IOException {
+        if (!redeemed.remove(id)) return;
+        try {
+            Files.write(file.toPath(), redeemed, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            redeemed.add(id);
+            throw e;
+        }
+    }
+
     public synchronized int size() {
         return redeemed.size();
     }

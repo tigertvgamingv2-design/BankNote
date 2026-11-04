@@ -18,6 +18,27 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerListener implements Listener {
 
+    private boolean deposit(Player player, double amount) {
+        try {
+            return BankNotes.getInstance().getEconomy().depositPlayer(player, amount).transactionSuccess();
+        } catch (Exception e) {
+            Log.error("Deposit threw for " + player.getName() + ": " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Deposit failed: make the id redeemable again and give the item back
+    private void rollback(Player player, String id, ItemStack item) {
+        try {
+            BankNotes.getInstance().getRedeemedStore().unredeem(id);
+        } catch (java.io.IOException e) {
+            Log.error("Failed to un-redeem " + id + " after failed deposit: " + e.getMessage());
+        }
+        ItemStack back = item.clone();
+        back.setAmount(1);
+        player.getInventory().addItem(back).values().forEach(i -> player.getWorld().dropItemNaturally(player.getLocation(), i));
+    }
+
     private void openPouch(Player player, EquipmentSlot hand, ItemStack item) {
         String id = PouchUtils.getId(item);
         PouchUtils.Tier tier = PouchUtils.getTier(PouchUtils.getTierId(item));
@@ -48,7 +69,12 @@ public class PlayerListener implements Listener {
         }
 
         double amount = PouchUtils.roll(tier);
-        BankNotes.getInstance().getEconomy().depositPlayer(player, amount);
+        if (!deposit(player, amount)) {
+            rollback(player, id, back);
+            player.sendMessage(Utils.colorize("&cThe deposit failed, so your pouch was returned. Try again."));
+            Fx.play(player, "error", "");
+            return;
+        }
         String amt = NoteUtils.format(amount);
         Log.info("&e" + player.getName() + " &7opened a &e" + tier.id().toUpperCase() + " &7pouch and received &a$" + amt);
         PouchReveal.start(player, tier.name(), amt);
@@ -103,7 +129,12 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        BankNotes.getInstance().getEconomy().depositPlayer(player, amount);
+        if (!deposit(player, amount)) {
+            rollback(player, id, item);
+            player.sendMessage(Utils.colorize("&cThe deposit failed, so your note was returned. Try again."));
+            Fx.play(player, "error", "");
+            return;
+        }
         Log.redeem(player.getName(), NoteUtils.format(amount));
         Fx.play(player, "redeem", NoteUtils.format(amount));
         player.sendMessage(Utils.colorize("&aYou redeemed a bank note for &f$" + NoteUtils.format(amount) + "&a."));
